@@ -11,6 +11,9 @@
       },
     table_type=elementary.get_default_table_type(),
     incremental_strategy=elementary.get_default_incremental_strategy(),
+    engine=elementary.get_default_table_type() if target.type == 'clickhouse' else none,
+    order_by=['id'] if target.type == 'clickhouse' else none,
+    partition_by='toYYYYMMDD(bucket_start)' if target.type == 'clickhouse' else none,
   )
 }}
 
