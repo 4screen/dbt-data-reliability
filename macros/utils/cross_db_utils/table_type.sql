@@ -6,10 +6,6 @@
   {% do return("iceberg") %}
 {% endmacro %}
 
-{%- macro clickhouse__get_default_table_type() %}
-  {% do return("ReplacingMergeTree") %}
-{% endmacro %}
-
 {% macro default__get_default_table_type() %}
   {% do return(none) %}
 {% endmacro %}

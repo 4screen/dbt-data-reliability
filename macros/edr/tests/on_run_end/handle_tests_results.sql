@@ -94,7 +94,7 @@
       {% do return(none) %}
     {% endif %}
 
-    {%- set target_relation = elementary.get_elementary_relation('data_monitoring_metrics') -%}
+    {%- set target_relation = elementary.get_elementary_relation('data_monitoring_metrics_raw') -%}
     {% if not target_relation %}
       {% do elementary.raise_missing_elementary_models() %}
     {% endif %}
@@ -140,7 +140,6 @@
     {{ elementary.file_log("Inserting metrics into {}.".format(target_relation)) }}
     {%- do elementary.edr_create_table_as(true, temp_relation, test_tables_union_query) %}
     {% do elementary.run_query(insert_query) %}
-    {% do elementary.optimize_table(target_relation, temp_relation, "toYYYYMMDD(bucket_start)") %}
 
     {% if not elementary.has_temp_table_support() %}
         {% do elementary.fully_drop_relation(temp_relation) %}
