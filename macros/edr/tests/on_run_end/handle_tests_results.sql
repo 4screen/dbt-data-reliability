@@ -171,7 +171,7 @@
     {% if not test_tables_union_query %} {% do return(none) %} {% endif %}
 
     {%- set target_relation = elementary.get_elementary_relation(
-        "data_monitoring_metrics"
+        "data_monitoring_metrics_raw"
     ) -%}
     {% if not target_relation %}
         {% do elementary.raise_missing_elementary_models() %}
