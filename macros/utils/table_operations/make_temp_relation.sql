@@ -104,6 +104,19 @@
     {% do return(tmp_relation) %}
 {% endmacro %}
 
+{% macro clickhouse__edr_make_temp_relation(base_relation, suffix) %}
+    {# ClickHouse does not support database-qualified names for intermediate
+       relations used during macro execution. Strip database and schema so the
+       relation resolves correctly within the current session's default database. #}
+    {% set tmp_identifier = elementary.table_name_with_suffix(
+        base_relation.identifier, suffix
+    ) %}
+    {% set tmp_relation = base_relation.incorporate(
+        path={"database": none, "schema": none, "identifier": tmp_identifier}
+    ) -%}
+    {% do return(tmp_relation) %}
+{% endmacro %}
+
 {% macro dremio__edr_make_temp_relation(base_relation, suffix) %}
     {% set base_relation_with_type = base_relation.incorporate(type="table") %}
     {% do return(dbt.make_temp_relation(base_relation_with_type, suffix)) %}
