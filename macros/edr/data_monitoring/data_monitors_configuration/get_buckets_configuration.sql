@@ -144,6 +144,7 @@
             min(bucket_start) as min_bucket_start,
             {{ detection_end_expr }} as max_bucket_end
         from min_bucket_start_candidates
+        {{ elementary.edr_join_use_nulls_settings() }}
     {% endset %}
 
     {# We assume we should also cosider sources as incremental #}
