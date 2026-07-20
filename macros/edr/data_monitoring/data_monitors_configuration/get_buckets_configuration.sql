@@ -63,6 +63,13 @@
     {%- set force_metrics_backfill = elementary.get_config_var(
         "force_metrics_backfill"
     ) %}
+    {%- set model_graph_node = elementary.get_model_graph_node(model_relation) %}
+    {# The anomaly scores query ignores metrics older than the latest full refresh, so they must not count as existing here or they'd never be re-collected. #}
+    {%- if not unit_test and elementary.is_incremental_model(model_graph_node) %}
+        {%- set latest_full_refresh = elementary.get_latest_full_refresh(model_graph_node) %}
+    {%- else %}
+        {%- set latest_full_refresh = none %}
+    {%- endif %}
 
     {%- if metric_names %}
         {%- set metric_names_tuple = elementary.strings_list_to_tuple(metric_names) %}
@@ -109,6 +116,9 @@
             and bucket_end <= {{ detection_end_expr }}
             and upper(full_table_name) = upper('{{ full_table_name }}')
             and metric_properties = {{ elementary.dict_to_quoted_json(metric_properties) }}
+            {%- if latest_full_refresh %}
+            and updated_at > {{ elementary.edr_cast_as_timestamp(elementary.edr_quote(latest_full_refresh)) }}
+            {%- endif %}
             {%- if metric_names %}
             and metric_name in {{ metric_names_tuple }}
             {%- endif %}
